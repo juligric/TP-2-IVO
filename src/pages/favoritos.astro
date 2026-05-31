@@ -133,14 +133,14 @@ import Layout from "../layouts/Layout.astro";
     // Muestra una tarjeta por cada libro guardado
     lista.innerHTML = favs.map(fav => `
       <div class="fav-card">
-        ${fav.thumbnail
-          ? `<img src="${fav.thumbnail}" alt="Tapa de ${fav.titulo}" />`
+        ${fav.cover_url
+          ? `<img src="${fav.cover_url}" alt="Tapa de ${fav.title}" />`
           : `<div class="sin-cover">📖</div>`
         }
         <div class="fav-info">
           <span class="fav-badge">Guardado</span>
-          <h3 class="fav-titulo">${fav.titulo}</h3>
-          <p class="fav-autor">${fav.autores ?? "Autor desconocido"}</p>
+          <h3 class="fav-titulo">${fav.title}</h3>
+          <p class="fav-autor">${fav.author ?? "Autor desconocido"}</p>
           <button class="btn-quitar" data-book="${fav.book_id}">✕ Quitar de favoritos</button>
         </div>
       </div>

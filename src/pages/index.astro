@@ -147,9 +147,9 @@ import Layout from "../layouts/Layout.astro";
       boton.addEventListener("click", async () => {
         await agregarFavorito(session!.user.id, {
           book_id:   boton.dataset.id,
-          titulo:    boton.dataset.titulo,
-          autores:   boton.dataset.autores,
-          thumbnail: boton.dataset.thumbnail,
+          title:     boton.dataset.titulo,
+          author:    boton.dataset.autores,
+          cover_url: boton.dataset.thumbnail,
         });
         boton.textContent = "✓ Guardado!";
         boton.style.background = "#16a34a";

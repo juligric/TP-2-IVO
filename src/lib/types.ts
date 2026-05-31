@@ -12,12 +12,12 @@ export interface Profile {
 // Un libro guardado en favoritos
 export interface Favorito {
   id: string;
-  usuario_id: string;
+  user_id: string;
   book_id: string;
-  titulo: string;
-  autores: string | null;
-  thumbnail: string | null;
-  added_at: string;
+  title: string;
+  author: string | null;
+  cover_url: string | null;
+  created_at: string;
 }
 
 // Formato de libro que devuelve la API de Open Library
