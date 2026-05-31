@@ -1,0 +1,80 @@
+---
+// Layout base que usan las páginas principales.
+// El diseño visual de este archivo lo hace Agus.
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: system-ui, sans-serif; background: #f0f4f8; color: #222; min-height: 100vh; display: flex; flex-direction: column; }
+
+      nav {
+        background: #0f1b2d;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .nav-logo { color: white; font-weight: 700; font-size: 1rem; text-decoration: none; }
+      .nav-links { display: flex; gap: 2rem; align-items: center; }
+      .nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.95rem; }
+      .nav-links a:hover { color: white; }
+      #logout-btn {
+        background: transparent;
+        border: 1px solid rgba(255,255,255,0.35);
+        color: white;
+        padding: 0.4rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+      #logout-btn:hover { background: rgba(255,255,255,0.1); }
+
+      main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; width: 100%; flex: 1; }
+
+      footer {
+        text-align: center;
+        padding: 1.5rem;
+        font-size: 0.8rem;
+        color: #aaa;
+        border-top: 1px solid #e5e7eb;
+        background: white;
+      }
+    </style>
+  </head>
+  <body>
+
+    <nav>
+      <a class="nav-logo" href="/">📚 Dashboard Libros</a>
+      <div class="nav-links">
+        <a href="/">Explorar</a>
+        <a href="/favoritos">Favoritos</a>
+        <button id="logout-btn">Cerrar sesión</button>
+      </div>
+    </nav>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer>© 2024 Dashboard Libros. Todos los derechos reservados.</footer>
+
+  </body>
+</html>
+
+<script>
+  import { signOut } from "../lib/auth";
+  document.getElementById("logout-btn")?.addEventListener("click", async () => {
+    await signOut();
+    window.location.href = "/login";
+  });
+</script>
