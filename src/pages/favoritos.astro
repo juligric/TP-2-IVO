@@ -1,0 +1,159 @@
+---
+// Página de favoritos - muestra todos los libros que el usuario guardó.
+// Si no hay ninguno, muestra un mensaje para que vaya a explorar.
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Mis Favoritos">
+
+  <div style="margin-bottom: 2.5rem;">
+    <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;">
+      Mis libros favoritos 📚
+    </h1>
+    <p style="color: #666; font-size: 0.93rem;">
+      Todos los libros que guardaste, listos para cuando quieras leerlos.
+    </p>
+  </div>
+
+  <!-- Las tarjetas de favoritos aparecen acá -->
+  <div id="favoritos-lista"></div>
+
+</Layout>
+
+<style>
+  /* Grilla de 4 columnas */
+  #favoritos-lista {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.4rem;
+  }
+
+  .fav-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s;
+  }
+  .fav-card:hover { transform: translateY(-4px); }
+
+  .fav-card img { width: 100%; height: 190px; object-fit: cover; }
+
+  .sin-cover {
+    width: 100%;
+    height: 190px;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+  }
+
+  .fav-info { padding: 1rem; flex: 1; display: flex; flex-direction: column; }
+
+  .fav-badge {
+    display: inline-block;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    width: fit-content;
+  }
+
+  .fav-titulo { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; line-height: 1.3; }
+  .fav-autor  { font-size: 0.8rem; color: #666; margin-bottom: 1rem; flex: 1; }
+
+  .btn-quitar {
+    width: 100%;
+    background: white;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.5rem;
+    font-size: 0.82rem;
+    cursor: pointer;
+    color: #666;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .btn-quitar:hover { background: #fff0f0; border-color: #fca5a5; color: #b91c1c; }
+
+  /* Mensaje cuando no hay favoritos */
+  .vacio {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 5rem 2rem;
+    color: #888;
+  }
+  .vacio-emoji { font-size: 3.5rem; margin-bottom: 1rem; }
+  .vacio h3   { font-size: 1.1rem; color: #444; margin-bottom: 0.4rem; }
+  .vacio p    { font-size: 0.88rem; margin-bottom: 1.5rem; }
+  .vacio a {
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+    padding: 0.65rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .vacio a:hover { background: #1d4ed8; }
+</style>
+
+<script>
+  import { getSession } from "../lib/auth";
+  import { getFavoritos, eliminarFavorito } from "../lib/db";
+
+  const session = await getSession();
+  if (!session) { window.location.href = "/login"; }
+
+  const lista = document.getElementById("favoritos-lista")!;
+
+  async function cargarFavoritos() {
+    lista.innerHTML = `<p style="grid-column:1/-1; text-align:center; padding:3rem; color:#888;">Cargando tus libros...</p>`;
+    const favs = await getFavoritos(session!.user.id);
+
+    if (!favs.length) {
+      lista.innerHTML = `
+        <div class="vacio">
+          <div class="vacio-emoji">🔍</div>
+          <h3>Tu colección está vacía</h3>
+          <p>Todavía no guardaste ningún libro. ¡Explorá el catálogo y empezá tu lista!</p>
+          <a href="/">Explorar libros</a>
+        </div>
+      `;
+      return;
+    }
+
+    // Muestra una tarjeta por cada libro guardado
+    lista.innerHTML = favs.map(fav => `
+      <div class="fav-card">
+        ${fav.cover_url
+          ? `<img src="${fav.cover_url}" alt="Tapa de ${fav.title}" />`
+          : `<div class="sin-cover">📖</div>`
+        }
+        <div class="fav-info">
+          <span class="fav-badge">Guardado</span>
+          <h3 class="fav-titulo">${fav.title}</h3>
+          <p class="fav-autor">${fav.author ?? "Autor desconocido"}</p>
+          <button class="btn-quitar" data-book="${fav.book_id}">✕ Quitar de favoritos</button>
+        </div>
+      </div>
+    `).join("");
+
+    // Cuando hacen click en "Quitar" elimina el libro y recarga la lista
+    document.querySelectorAll(".btn-quitar").forEach((btn: any) => {
+      btn.addEventListener("click", async () => {
+        await eliminarFavorito(session!.user.id, btn.dataset.book);
+        await cargarFavoritos();
+      });
+    });
+  }
+
+  cargarFavoritos();
+</script>

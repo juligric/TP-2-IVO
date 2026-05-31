@@ -1,0 +1,160 @@
+---
+// Página principal - tiene el buscador de libros.
+// El usuario escribe algo, se busca en Open Library y aparecen las tarjetas con resultados.
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Dashboard Libros">
+
+  <div style="text-align: center; padding: 3rem 1rem 2.5rem;">
+    <h1 style="font-size: 2.4rem; font-weight: 800; margin-bottom: 0.8rem;">
+      Descubrí tu próxima lectura
+    </h1>
+    <p style="color: #666; margin-bottom: 2rem; font-size: 1rem;">
+      Buscá entre miles de libros en nuestra base de datos digital.
+    </p>
+
+    <form id="search-form" style="display: flex; gap: 0.5rem; max-width: 600px; margin: 0 auto;">
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Ej: Literatura Clásica, Borges..."
+        required
+        style="flex: 1; padding: 0.85rem 1.2rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; background: white;"
+      />
+      <button
+        type="submit"
+        style="background: #2563eb; color: white; border: none; padding: 0.85rem 1.8rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem;"
+      >
+        BUSCAR
+      </button>
+    </form>
+  </div>
+
+  <!-- Los resultados de búsqueda aparecen acá -->
+  <div id="results"></div>
+
+</Layout>
+
+<script>
+  import { getSession } from "../lib/auth";
+  import { buscarLibros, getCoverUrl } from "../lib/books";
+  import { agregarFavorito } from "../lib/db";
+
+  // Si el usuario no está logueado lo mandamos al login
+  const session = await getSession();
+  if (!session) {
+    window.location.href = "/login";
+  }
+
+  const form    = document.getElementById("search-form")!;
+  const results = document.getElementById("results")!;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const input = document.getElementById("search-input") as HTMLInputElement;
+    const query = input.value;
+
+    results.innerHTML = `<p style="text-align:center; padding:3rem; color:#888;">Buscando...</p>`;
+
+    const libros = await buscarLibros(query);
+
+    if (libros.length === 0) {
+      results.innerHTML = `<p style="text-align:center; padding:3rem; color:#888;">No se encontraron resultados.</p>`;
+      return;
+    }
+
+    results.innerHTML = `
+      <div style="margin-bottom: 1.5rem;">
+        <p style="font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.3rem;">
+          Resultados de búsqueda
+        </p>
+        <h2 style="font-size: 1.5rem; font-weight: 700;">${query}</h2>
+      </div>
+      <div id="grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;"></div>
+    `;
+
+    const grid = document.getElementById("grid")!;
+
+    for (const libro of libros) {
+      const titulo   = libro.title;
+      const autores  = libro.author_name ? libro.author_name.join(", ") : "Autor desconocido";
+      const coverUrl = libro.cover_i ? getCoverUrl(libro.cover_i, "L") : "";
+      const bookId   = libro.key.replace("/works/", "");
+      const badge    = libro.subject ? libro.subject[0] : "";
+      const anio     = libro.first_publish_year ? String(libro.first_publish_year) : "";
+
+      const card = document.createElement("div");
+      card.style.cssText = `
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        display: flex;
+        flex-direction: column;
+      `;
+
+      card.innerHTML = `
+        <div style="position: relative;">
+          ${coverUrl
+            ? `<img src="${coverUrl}" alt="tapa" style="width:100%; height:220px; object-fit:cover;" />`
+            : `<div style="width:100%; height:220px; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-size:3rem;">📖</div>`
+          }
+          ${badge ? `
+            <span style="
+              position: absolute; top: 10px; left: 10px;
+              background: #dbeafe; color: #1d4ed8;
+              font-size: 0.72rem; padding: 0.2rem 0.6rem;
+              border-radius: 20px; font-weight: 600;
+            ">${badge}</span>
+          ` : ""}
+        </div>
+
+        <div style="padding: 1rem; flex: 1; display: flex; flex-direction: column;">
+          <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem;">${titulo}</h3>
+          <p style="font-size: 0.82rem; color: #666; margin-bottom: 0.5rem;">${autores}${anio ? " • " + anio : ""}</p>
+          <p style="font-size: 0.82rem; color: #555; margin-bottom: 1rem; flex: 1;">
+            Obra disponible en el catálogo digital.
+          </p>
+          <button class="btn-guardar"
+            data-id="${bookId}"
+            data-titulo="${titulo}"
+            data-autores="${autores}"
+            data-thumbnail="${coverUrl}"
+            style="
+              width: 100%;
+              background: #2563eb;
+              color: white;
+              border: none;
+              padding: 0.65rem;
+              border-radius: 8px;
+              cursor: pointer;
+              font-weight: 600;
+              font-size: 0.9rem;
+            "
+          >
+            Guardar en favoritos
+          </button>
+        </div>
+      `;
+
+      grid.appendChild(card);
+    }
+
+    // Evento para guardar un libro en favoritos
+    document.querySelectorAll(".btn-guardar").forEach((boton: any) => {
+      boton.addEventListener("click", async () => {
+        await agregarFavorito(session!.user.id, {
+          book_id:   boton.dataset.id,
+          title:     boton.dataset.titulo,
+          author:    boton.dataset.autores,
+          cover_url: boton.dataset.thumbnail,
+        });
+        boton.textContent = "✓ Guardado!";
+        boton.style.background = "#16a34a";
+      });
+    });
+
+  });
+</script>

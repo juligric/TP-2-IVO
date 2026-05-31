@@ -1,0 +1,184 @@
+---
+// Página de registro - acá el usuario crea una cuenta nueva con nombre, email y contraseña
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crear cuenta</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: system-ui, sans-serif;
+        background: #f0f4f8;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      nav {
+        background: #0f1b2d;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .nav-logo { color: white; font-weight: 700; font-size: 1rem; text-decoration: none; }
+
+      .contenido {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+      }
+
+      .ok-box {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1d4ed8;
+        border-radius: 8px;
+        padding: 0.8rem 1rem;
+        font-size: 0.85rem;
+        margin-bottom: 1.2rem;
+        width: 100%;
+        max-width: 400px;
+        display: none;
+      }
+
+      .card {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      }
+
+      h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.4rem; }
+      .subtitulo { color: #888; font-size: 0.9rem; margin-bottom: 1.8rem; }
+
+      .error-box {
+        background: #fff0f0;
+        border: 1px solid #fca5a5;
+        color: #b91c1c;
+        border-radius: 8px;
+        padding: 0.7rem 1rem;
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+        display: none;
+      }
+
+      .campo { margin-bottom: 1rem; }
+      .campo label { font-size: 0.85rem; color: #555; display: block; margin-bottom: 0.3rem; }
+      .campo input {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 0.95rem;
+      }
+      .campo input:focus { outline: none; border-color: #2563eb; }
+      .hint { font-size: 0.78rem; color: #aaa; margin-top: 0.3rem; }
+
+      .btn-azul {
+        width: 100%;
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 0.8rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 0.5rem;
+      }
+      .btn-azul:hover { background: #1d4ed8; }
+
+      .link-login {
+        margin-top: 1.2rem;
+        font-size: 0.85rem;
+        color: #666;
+        text-align: center;
+      }
+      .link-login a { color: #2563eb; text-decoration: none; font-weight: 600; }
+      .link-login a:hover { text-decoration: underline; }
+
+      footer { text-align: center; padding: 1.5rem; font-size: 0.8rem; color: #aaa; }
+    </style>
+  </head>
+  <body>
+
+    <nav>
+      <a class="nav-logo" href="/">📚 Dashboard Libros</a>
+    </nav>
+
+    <div class="contenido">
+
+      <div class="ok-box" id="ok-msg">
+        ✓ ¡Te registraste! Revisá tu email y confirmá tu cuenta antes de iniciar sesión.
+      </div>
+
+      <div class="card">
+        <h1>Crear cuenta</h1>
+        <p class="subtitulo">Uníte a nuestra comunidad de lectores.</p>
+
+        <div class="error-box" id="error-msg"></div>
+
+        <form id="registro-form">
+          <div class="campo">
+            <label>Nombre completo</label>
+            <input type="text" name="nombre" placeholder="Ej. Juan Pérez" required />
+          </div>
+
+          <div class="campo">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="correo@ejemplo.com" required />
+          </div>
+
+          <div class="campo">
+            <label>Contraseña</label>
+            <input type="password" name="password" placeholder="••••••••" minlength="6" required />
+            <p class="hint">Mínimo 6 caracteres</p>
+          </div>
+
+          <button type="submit" class="btn-azul">Registrarse →</button>
+        </form>
+
+        <p class="link-login">
+          ¿Ya tenés una cuenta? <a href="/login">Iniciá sesión</a>
+        </p>
+      </div>
+
+    </div>
+
+    <footer>© 2024 Dashboard Libros. Todos los derechos reservados.</footer>
+
+  </body>
+</html>
+
+<script>
+  import { signUp } from "../lib/auth";
+
+  document.getElementById("registro-form")!.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form     = e.target as HTMLFormElement;
+    const nombre   = (form.elements.namedItem("nombre")   as HTMLInputElement).value;
+    const email    = (form.elements.namedItem("email")    as HTMLInputElement).value;
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+    const errorBox = document.getElementById("error-msg")!;
+    const okBox    = document.getElementById("ok-msg")!;
+
+    try {
+      await signUp(email, password, nombre);
+      okBox.style.display = "block";
+      errorBox.style.display = "none";
+    } catch (err: any) {
+      errorBox.textContent = err.message;
+      errorBox.style.display = "block";
+    }
+  });
+</script>
