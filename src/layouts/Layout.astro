@@ -1,6 +1,6 @@
 ---
-// Layout base que usan las páginas principales.
-// El diseño visual de este archivo lo hace Agus.
+// Layout principal de la app - tiene el navbar arriba y el footer abajo.
+// Todas las páginas lo usan para mantener el mismo diseño en toda la app.
 interface Props {
   title: string;
 }
@@ -12,41 +12,112 @@ const { title } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
+    <title>{title} — BookShelf</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
+      :root {
+        --azul:      #4f46e5;
+        --azul-dark: #3730a3;
+        --fondo:     #f8fafc;
+        --texto:     #1e293b;
+        --gris:      #64748b;
+        --borde:     #e2e8f0;
+      }
+
       * { box-sizing: border-box; margin: 0; padding: 0; }
-      body { font-family: system-ui, sans-serif; background: #f0f4f8; color: #222; min-height: 100vh; display: flex; flex-direction: column; }
 
-      nav {
-        background: #0f1b2d;
-        padding: 1rem 2rem;
+      body {
+        font-family: 'Inter', system-ui, sans-serif;
+        background: var(--fondo);
+        color: var(--texto);
+        min-height: 100vh;
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+      }
+
+      /* ── Navbar ── */
+      nav {
+        background: white;
+        border-bottom: 1px solid var(--borde);
+        padding: 0 2rem;
+        height: 64px;
+        display: flex;
         align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
       }
-      .nav-logo { color: white; font-weight: 700; font-size: 1rem; text-decoration: none; }
-      .nav-links { display: flex; gap: 2rem; align-items: center; }
-      .nav-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.95rem; }
-      .nav-links a:hover { color: white; }
-      #logout-btn {
-        background: transparent;
-        border: 1px solid rgba(255,255,255,0.35);
-        color: white;
-        padding: 0.4rem 1rem;
-        border-radius: 6px;
-        cursor: pointer;
+
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--azul);
+        text-decoration: none;
+        letter-spacing: -0.02em;
+      }
+      .nav-logo span { color: var(--texto); }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav-links a {
+        color: var(--gris);
+        text-decoration: none;
         font-size: 0.9rem;
+        font-weight: 500;
+        padding: 0.45rem 0.9rem;
+        border-radius: 8px;
+        transition: all 0.15s;
       }
-      #logout-btn:hover { background: rgba(255,255,255,0.1); }
+      .nav-links a:hover {
+        background: #f1f5f9;
+        color: var(--texto);
+      }
+      .nav-links a.activo {
+        background: #ede9fe;
+        color: var(--azul);
+      }
 
-      main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; width: 100%; flex: 1; }
+      #logout-btn {
+        background: var(--azul);
+        color: white;
+        border: none;
+        padding: 0.45rem 1.1rem;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s;
+        font-family: inherit;
+        margin-left: 0.5rem;
+      }
+      #logout-btn:hover { background: var(--azul-dark); }
 
+      /* ── Contenido principal ── */
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2.5rem 1.5rem;
+        width: 100%;
+        flex: 1;
+      }
+
+      /* ── Footer ── */
       footer {
         text-align: center;
         padding: 1.5rem;
         font-size: 0.8rem;
-        color: #aaa;
-        border-top: 1px solid #e5e7eb;
+        color: #94a3b8;
+        border-top: 1px solid var(--borde);
         background: white;
       }
     </style>
@@ -54,10 +125,10 @@ const { title } = Astro.props;
   <body>
 
     <nav>
-      <a class="nav-logo" href="/">📚 Dashboard Libros</a>
+      <a class="nav-logo" href="/">📚 <span>BookShelf</span></a>
       <div class="nav-links">
-        <a href="/">Explorar</a>
-        <a href="/favoritos">Favoritos</a>
+        <a href="/" id="link-explorar">Explorar</a>
+        <a href="/favoritos" id="link-favoritos">Favoritos</a>
         <button id="logout-btn">Cerrar sesión</button>
       </div>
     </nav>
@@ -66,13 +137,19 @@ const { title } = Astro.props;
       <slot />
     </main>
 
-    <footer>© 2024 Dashboard Libros. Todos los derechos reservados.</footer>
+    <footer>© 2024 BookShelf · Todos los derechos reservados</footer>
 
   </body>
 </html>
 
 <script>
   import { signOut } from "../lib/auth";
+
+  // Marcamos el link activo según la página en la que estamos
+  const path = window.location.pathname;
+  if (path === "/") document.getElementById("link-explorar")?.classList.add("activo");
+  if (path === "/favoritos") document.getElementById("link-favoritos")?.classList.add("activo");
+
   document.getElementById("logout-btn")?.addEventListener("click", async () => {
     await signOut();
     window.location.href = "/login";

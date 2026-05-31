@@ -6,49 +6,66 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout title="Mis Favoritos">
 
-  <div style="margin-bottom: 2.5rem;">
-    <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;">
-      Mis libros favoritos 📚
-    </h1>
-    <p style="color: #666; font-size: 0.93rem;">
-      Todos los libros que guardaste, listos para cuando quieras leerlos.
-    </p>
+  <div class="encabezado">
+    <p class="tag">✦ Mi colección</p>
+    <h1>Mis favoritos <span class="emoji">📚</span></h1>
+    <p class="subtitulo">Todos los libros que guardaste, en un solo lugar.</p>
   </div>
 
-  <!-- Las tarjetas de favoritos aparecen acá -->
   <div id="favoritos-lista"></div>
 
 </Layout>
 
 <style>
-  /* Grilla de 4 columnas */
+  /* Encabezado */
+  .encabezado { margin-bottom: 2.5rem; }
+  .tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #4f46e5;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+  .encabezado h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+  .emoji { font-style: normal; }
+  .subtitulo { color: #64748b; font-size: 0.93rem; }
+
+  /* Grilla */
   #favoritos-lista {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1.4rem;
   }
 
+  /* Tarjeta */
   .fav-card {
     background: white;
-    border-radius: 16px;
+    border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
   }
-  .fav-card:hover { transform: translateY(-4px); }
+  .fav-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.1);
+  }
 
-  .fav-card img { width: 100%; height: 190px; object-fit: cover; }
-
+  .fav-cover { height: 200px; overflow: hidden; }
+  .fav-cover img { width: 100%; height: 100%; object-fit: cover; }
   .sin-cover {
-    width: 100%;
-    height: 190px;
-    background: #e2e8f0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+    display: flex; align-items: center; justify-content: center;
     font-size: 3rem;
   }
 
@@ -56,53 +73,85 @@ import Layout from "../layouts/Layout.astro";
 
   .fav-badge {
     display: inline-block;
-    background: #dbeafe;
-    color: #1d4ed8;
-    font-size: 0.7rem;
+    background: #ede9fe;
+    color: #4f46e5;
+    font-size: 0.68rem;
+    font-weight: 700;
     padding: 0.2rem 0.6rem;
     border-radius: 20px;
     margin-bottom: 0.5rem;
-    font-weight: 700;
     width: fit-content;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
-  .fav-titulo { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; line-height: 1.3; }
-  .fav-autor  { font-size: 0.8rem; color: #666; margin-bottom: 1rem; flex: 1; }
+  .fav-titulo {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.2rem;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .fav-autor { font-size: 0.78rem; color: #64748b; margin-bottom: 1rem; flex: 1; }
 
   .btn-quitar {
     width: 100%;
     background: white;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    color: #94a3b8;
     padding: 0.5rem;
-    font-size: 0.82rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
     cursor: pointer;
-    color: #666;
-    font-weight: 500;
     transition: all 0.15s;
+    font-family: inherit;
   }
-  .btn-quitar:hover { background: #fff0f0; border-color: #fca5a5; color: #b91c1c; }
+  .btn-quitar:hover {
+    border-color: #fca5a5;
+    color: #dc2626;
+    background: #fef2f2;
+  }
 
-  /* Mensaje cuando no hay favoritos */
+  /* Estado vacío */
   .vacio {
     grid-column: 1 / -1;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding: 5rem 2rem;
-    color: #888;
+    text-align: center;
   }
-  .vacio-emoji { font-size: 3.5rem; margin-bottom: 1rem; }
-  .vacio h3   { font-size: 1.1rem; color: #444; margin-bottom: 0.4rem; }
-  .vacio p    { font-size: 0.88rem; margin-bottom: 1.5rem; }
+  .vacio-icono {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.4;
+  }
+  .vacio h3 { font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem; }
+  .vacio p  { font-size: 0.88rem; color: #64748b; margin-bottom: 1.5rem; }
   .vacio a {
-    background: #2563eb;
+    background: #4f46e5;
     color: white;
     text-decoration: none;
-    padding: 0.65rem 1.5rem;
-    border-radius: 8px;
+    padding: 0.7rem 1.6rem;
+    border-radius: 10px;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 700;
+    transition: background 0.15s;
   }
-  .vacio a:hover { background: #1d4ed8; }
+  .vacio a:hover { background: #3730a3; }
+
+  .cargando {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: #94a3b8;
+  }
 </style>
 
 <script>
@@ -115,28 +164,29 @@ import Layout from "../layouts/Layout.astro";
   const lista = document.getElementById("favoritos-lista")!;
 
   async function cargarFavoritos() {
-    lista.innerHTML = `<p style="grid-column:1/-1; text-align:center; padding:3rem; color:#888;">Cargando tus libros...</p>`;
+    lista.innerHTML = `<p class="cargando">Cargando tu colección...</p>`;
     const favs = await getFavoritos(session!.user.id);
 
     if (!favs.length) {
       lista.innerHTML = `
         <div class="vacio">
-          <div class="vacio-emoji">🔍</div>
+          <div class="vacio-icono">🔍</div>
           <h3>Tu colección está vacía</h3>
-          <p>Todavía no guardaste ningún libro. ¡Explorá el catálogo y empezá tu lista!</p>
+          <p>Todavía no guardaste ningún libro.<br>¡Explorá el catálogo y empezá tu lista!</p>
           <a href="/">Explorar libros</a>
         </div>
       `;
       return;
     }
 
-    // Muestra una tarjeta por cada libro guardado
     lista.innerHTML = favs.map(fav => `
       <div class="fav-card">
-        ${fav.cover_url
-          ? `<img src="${fav.cover_url}" alt="Tapa de ${fav.title}" />`
-          : `<div class="sin-cover">📖</div>`
-        }
+        <div class="fav-cover">
+          ${fav.cover_url
+            ? `<img src="${fav.cover_url}" alt="Tapa de ${fav.title}" />`
+            : `<div class="sin-cover">📖</div>`
+          }
+        </div>
         <div class="fav-info">
           <span class="fav-badge">Guardado</span>
           <h3 class="fav-titulo">${fav.title}</h3>
@@ -146,7 +196,6 @@ import Layout from "../layouts/Layout.astro";
       </div>
     `).join("");
 
-    // Cuando hacen click en "Quitar" elimina el libro y recarga la lista
     document.querySelectorAll(".btn-quitar").forEach((btn: any) => {
       btn.addEventListener("click", async () => {
         await eliminarFavorito(session!.user.id, btn.dataset.book);
