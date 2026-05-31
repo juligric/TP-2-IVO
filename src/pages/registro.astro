@@ -7,125 +7,154 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Crear cuenta</title>
+    <title>Crear cuenta — BookShelf</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
       body {
-        font-family: system-ui, sans-serif;
-        background: #f0f4f8;
+        font-family: 'Inter', system-ui, sans-serif;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
         min-height: 100vh;
         display: flex;
-        flex-direction: column;
-      }
-
-      nav {
-        background: #0f1b2d;
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
       }
-      .nav-logo { color: white; font-weight: 700; font-size: 1rem; text-decoration: none; }
 
-      .contenido {
+      .wrapper {
+        display: flex;
+        width: 100%;
+        max-width: 900px;
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+        min-height: 540px;
+      }
+
+      /* Panel izquierdo decorativo */
+      .panel-izq {
         flex: 1;
+        background: linear-gradient(160deg, #4f46e5, #7c3aed);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 2rem 1rem;
+        padding: 3rem 2rem;
+        color: white;
+        text-align: center;
       }
+      .panel-izq .logo { font-size: 3.5rem; margin-bottom: 1.2rem; }
+      .panel-izq h2   { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.6rem; }
+      .panel-izq p    { font-size: 0.9rem; opacity: 0.8; line-height: 1.6; max-width: 220px; }
+
+      /* Panel derecho */
+      .panel-der {
+        flex: 1;
+        padding: 2.5rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      h1 { font-size: 1.6rem; font-weight: 800; color: #1e293b; margin-bottom: 0.3rem; }
+      .subtitulo { color: #64748b; font-size: 0.9rem; margin-bottom: 1.8rem; }
 
       .ok-box {
-        background: #eff6ff;
-        border: 1px solid #bfdbfe;
-        color: #1d4ed8;
-        border-radius: 8px;
-        padding: 0.8rem 1rem;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #15803d;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
         font-size: 0.85rem;
         margin-bottom: 1.2rem;
-        width: 100%;
-        max-width: 400px;
         display: none;
+        line-height: 1.5;
       }
-
-      .card {
-        background: white;
-        border-radius: 16px;
-        padding: 2.5rem 2rem;
-        width: 100%;
-        max-width: 400px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      }
-
-      h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.4rem; }
-      .subtitulo { color: #888; font-size: 0.9rem; margin-bottom: 1.8rem; }
 
       .error-box {
-        background: #fff0f0;
-        border: 1px solid #fca5a5;
-        color: #b91c1c;
-        border-radius: 8px;
-        padding: 0.7rem 1rem;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
         font-size: 0.85rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.2rem;
         display: none;
       }
 
       .campo { margin-bottom: 1rem; }
-      .campo label { font-size: 0.85rem; color: #555; display: block; margin-bottom: 0.3rem; }
+      .campo label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #475569;
+        display: block;
+        margin-bottom: 0.4rem;
+      }
       .campo input {
         width: 100%;
-        padding: 0.7rem 1rem;
-        border: 1px solid #ddd;
-        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 10px;
         font-size: 0.95rem;
+        font-family: inherit;
+        transition: border-color 0.15s;
+        color: #1e293b;
       }
-      .campo input:focus { outline: none; border-color: #2563eb; }
-      .hint { font-size: 0.78rem; color: #aaa; margin-top: 0.3rem; }
+      .campo input:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+      }
+      .hint { font-size: 0.75rem; color: #94a3b8; margin-top: 0.3rem; }
 
-      .btn-azul {
+      .btn-principal {
         width: 100%;
-        background: #2563eb;
+        background: #4f46e5;
         color: white;
         border: none;
-        padding: 0.8rem;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 600;
+        padding: 0.85rem;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: 700;
         cursor: pointer;
-        margin-top: 0.5rem;
+        transition: background 0.15s;
+        font-family: inherit;
+        margin-top: 0.4rem;
       }
-      .btn-azul:hover { background: #1d4ed8; }
+      .btn-principal:hover { background: #3730a3; }
 
       .link-login {
-        margin-top: 1.2rem;
-        font-size: 0.85rem;
-        color: #666;
+        margin-top: 1.4rem;
         text-align: center;
+        font-size: 0.85rem;
+        color: #64748b;
       }
-      .link-login a { color: #2563eb; text-decoration: none; font-weight: 600; }
+      .link-login a {
+        color: #4f46e5;
+        font-weight: 600;
+        text-decoration: none;
+      }
       .link-login a:hover { text-decoration: underline; }
-
-      footer { text-align: center; padding: 1.5rem; font-size: 0.8rem; color: #aaa; }
     </style>
   </head>
   <body>
 
-    <nav>
-      <a class="nav-logo" href="/">📚 Dashboard Libros</a>
-    </nav>
+    <div class="wrapper">
 
-    <div class="contenido">
-
-      <div class="ok-box" id="ok-msg">
-        ✓ ¡Te registraste! Revisá tu email y confirmá tu cuenta antes de iniciar sesión.
+      <div class="panel-izq">
+        <div class="logo">📚</div>
+        <h2>BookShelf</h2>
+        <p>Creá tu cuenta gratis y empezá a construir tu biblioteca personal.</p>
       </div>
 
-      <div class="card">
+      <div class="panel-der">
         <h1>Crear cuenta</h1>
-        <p class="subtitulo">Uníte a nuestra comunidad de lectores.</p>
+        <p class="subtitulo">Uníte a nuestra comunidad de lectores</p>
 
+        <div class="ok-box" id="ok-msg">
+          ✓ ¡Te registraste! Revisá tu email y confirmá tu cuenta antes de iniciar sesión.
+        </div>
         <div class="error-box" id="error-msg"></div>
 
         <form id="registro-form">
@@ -133,29 +162,24 @@
             <label>Nombre completo</label>
             <input type="text" name="nombre" placeholder="Ej. Juan Pérez" required />
           </div>
-
           <div class="campo">
             <label>Email</label>
             <input type="email" name="email" placeholder="correo@ejemplo.com" required />
           </div>
-
           <div class="campo">
             <label>Contraseña</label>
             <input type="password" name="password" placeholder="••••••••" minlength="6" required />
             <p class="hint">Mínimo 6 caracteres</p>
           </div>
-
-          <button type="submit" class="btn-azul">Registrarse →</button>
+          <button type="submit" class="btn-principal">Registrarse →</button>
         </form>
 
         <p class="link-login">
-          ¿Ya tenés una cuenta? <a href="/login">Iniciá sesión</a>
+          ¿Ya tenés cuenta? <a href="/login">Iniciá sesión</a>
         </p>
       </div>
 
     </div>
-
-    <footer>© 2024 Dashboard Libros. Todos los derechos reservados.</footer>
 
   </body>
 </html>
