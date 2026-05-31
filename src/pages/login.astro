@@ -44,7 +44,16 @@
         color: white;
         text-align: center;
       }
-      .panel-izq .logo { font-size: 3.5rem; margin-bottom: 1.2rem; }
+      .panel-izq .logo-box {
+        width: 64px; height: 64px;
+        background: rgba(255,255,255,0.15);
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 16px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.6rem; font-weight: 900;
+        margin: 0 auto 1.2rem;
+        letter-spacing: -0.03em;
+      }
       .panel-izq h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.6rem; }
       .panel-izq p  { font-size: 0.9rem; opacity: 0.8; line-height: 1.6; max-width: 220px; }
 
@@ -132,7 +141,7 @@
 
       <!-- Panel decorativo izquierdo -->
       <div class="panel-izq">
-        <div class="logo">📚</div>
+        <div class="logo-box">BS</div>
         <h2>BookShelf</h2>
         <p>Tu biblioteca digital personalizada. Buscá, guardá y organizá tus libros favoritos.</p>
       </div>
