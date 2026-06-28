@@ -12,6 +12,8 @@ jobs:
     env:
       PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
       PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - name: Bajar el código
         uses: actions/checkout@v4
@@ -38,3 +40,12 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Instalar Vercel CLI
+        run: npm install -g vercel
+
+      - name: Bajar config de Vercel
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Publicar en Vercel
+        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
