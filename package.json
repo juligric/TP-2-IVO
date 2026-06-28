@@ -10,13 +10,15 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.4",
     "astro": "^6.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "vitest": "^4.1.9"
   }
 }
